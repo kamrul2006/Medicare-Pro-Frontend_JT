@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axiosInstance from "@/lib/axios";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "@/features/auth/authSlice";
+import { setCredentials } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
@@ -23,6 +23,8 @@ export default function AdminLogin() {
             });
 
             console.log("Response: ", response.data);
+            console.log(response.data.token);
+            console.log(response.data.role);
 
             dispatch(
                 setCredentials({
