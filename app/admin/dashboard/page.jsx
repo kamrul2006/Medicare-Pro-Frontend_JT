@@ -3,10 +3,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+
 
 export default function AdminDashboard() {
     const { token } = useSelector((state) => state.auth);
     const [doctors, setDoctors] = useState([]);
+    const router = useRouter();
+
 
     console.log(doctors)
 
@@ -14,6 +18,14 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("all");
     const [sortOrder, setSortOrder] = useState("asc");
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            router.replace("/");
+        }
+    }, [router]);
+
 
     useEffect(() => {
         const fetchDoctors = async () => {
