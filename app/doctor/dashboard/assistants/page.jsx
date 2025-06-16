@@ -35,6 +35,8 @@ export default function AssistantsList() {
         }
     };
 
+    // console.log(assistants)
+
     useEffect(() => {
         fetchAssistants();
     }, []);
@@ -57,7 +59,7 @@ export default function AssistantsList() {
                 }
             );
             alert("Assistant deleted successfully!");
-            fetchAssistants(); // refresh the list
+            fetchAssistants();
         } catch (err) {
             alert(err?.response?.data?.message || "Failed to delete assistant");
         }
