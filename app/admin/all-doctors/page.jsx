@@ -1,0 +1,115 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
+export default function AllDoctors() {
+    const { token } = useSelector((state) => state.auth);
+    const [doctors, setDoctors] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDoctors = async () => {
+            try {
+                const res = await axios.get(
+                    "https://medicare-pro-backend.vercel.app/api/v1/admin/users",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                setDoctors(res.data);
+            } catch (err) {
+                console.error("Error fetching doctors:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDoctors();
+    }, [token]);
+
+
+    console.log(doctors)
+
+
+    // Delete Doctor Function
+    const handleDelete = async (id) => {
+        if (!confirm("Are you sure you want to delete this doctor?")) {
+            return;
+        }
+        try {
+            await axios.delete(
+                `https://medicare-pro-backend.vercel.app/api/v1/admin/delete-doctor/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            alert("Doctor deleted successfully");
+            setDoctors(doctors.filter((doc) => doc._id !== id));
+        } catch (err) {
+            console.error("Error deleting doctor:", err);
+            alert("Failed to delete doctor");
+        }
+    };
+
+    if (loading) {
+        return <div className="p-8 text-center">Loading doctors...</div>;
+    }
+
+    return (
+        <div className="p-8">
+            <h1 className="text-2xl font-bold mb-6">All Doctors</h1>
+
+            <div className="overflow-x-auto">
+                <table className="min-w-full border border-gray-300 rounded">
+                    <thead className="bg-gray-200">
+                        <tr>
+                            <th className="p-3 border">Name</th>
+                            <th className="p-3 border">Email</th>
+                            <th className="p-3 border">Specialization</th>
+                            <th className="p-3 border">Start Date</th>
+                            <th className="p-3 border">End Date</th>
+                            <th className="p-3 border">Status</th>
+                            <th className="p-3 border">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {doctors.map((doc) => (
+                            <tr key={doc._id} className="text-center">
+                                <td className="p-3 border">{doc.name}</td>
+                                <td className="p-3 border">{doc.email}</td>
+                                <td className="p-3 border">{doc.specialization}</td>
+                                <td className="p-3 border">
+                                    {doc.subscription?.startDate
+                                        ? new Date(doc.subscription.startDate).toLocaleDateString()
+                                        : "N/A"}
+                                </td>
+                                <td className="p-3 border">
+                                    {doc.subscription?.endDate
+                                        ? new Date(doc.subscription.endDate).toLocaleDateString()
+                                        : "N/A"}
+                                </td>
+                                <td className="p-3 border">
+                                    {doc.subscription?.status || "N/A"}
+                                </td>
+                                <td className="p-3 border">
+                                    <button
+                                        className="bg-red-500 text-white px-3 py-1 rounded"
+                                        onClick={() => handleDelete(doc._id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
