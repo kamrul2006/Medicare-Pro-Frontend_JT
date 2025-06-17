@@ -71,7 +71,7 @@ export default function AddDoctor() {
 
             // console.log("Doctor created:", res.data);
             alert("Doctor added successfully!");
-            router.push("/admin/dashboard");
+            router.push("/admin/dashboard/all-doctors");
         } catch (err) {
             console.error("Error adding doctor:", err.response?.data || err.message);
             alert(err.response?.data?.message || "Failed to add doctor");

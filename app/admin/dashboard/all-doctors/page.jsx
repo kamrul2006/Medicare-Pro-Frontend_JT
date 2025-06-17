@@ -39,28 +39,6 @@ export default function AllDoctors() {
     console.log(doctors)
 
 
-    // Delete Doctor Function
-    const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this doctor?")) {
-            return;
-        }
-        try {
-            await axios.delete(
-                `https://medicare-pro-backend.vercel.app/api/v1/admin/delete-doctor/${id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            alert("Doctor deleted successfully");
-            setDoctors(doctors.filter((doc) => doc._id !== id));
-        } catch (err) {
-            console.error("Error deleting doctor:", err);
-            alert("Failed to delete doctor");
-        }
-    };
-
     if (loading) {
         return <div className="p-8 text-center">Loading doctors...</div>;
     }
@@ -87,7 +65,7 @@ export default function AllDoctors() {
                             <tr key={doc._id} className="text-center">
                                 <td className="p-3 border">{doc.name}</td>
                                 <td className="p-3 border">{doc.email}</td>
-                                <td className="p-3 border">{doc.specialization}</td>
+                                <td className="p-3 border">{doc.specialization || "N/M"}</td>
                                 <td className="p-3 border">
                                     {doc.subscription?.startDate
                                         ? new Date(doc.subscription.startDate).toLocaleDateString()
@@ -99,7 +77,7 @@ export default function AllDoctors() {
                                         : "N/A"}
                                 </td>
                                 <td className="p-3 border">
-                                    {doc.subscription?.status || "N/A"}
+                                    {doc.subscription?.isActive == true && "🟢" || "N/A"}
                                 </td>
 
                             </tr>
