@@ -60,7 +60,7 @@ export default function AddSubscription() {
             );
 
             setSuccess("Subscription plan added successfully!");
-            router.push("/admin/dashboard/subscriptions");
+            router.push("/admin/dashboard/subscription");
         } catch (err) {
             console.error("Error:", err);
             setError(err?.response?.data?.message || "Failed to create subscription plan");

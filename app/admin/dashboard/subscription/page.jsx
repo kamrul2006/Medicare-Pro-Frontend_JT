@@ -38,7 +38,7 @@ export default function PlanManagement() {
             );
             fetchPlans();
         } catch (err) {
-            alert("Failed to delete.");
+            alert("No API FOUND ON POST MAN");
         }
     };
 
@@ -85,7 +85,7 @@ export default function PlanManagement() {
                                         onClick={() => router.push(`/admin/dashboard/subscription/edit/${plan._id}`)}
                                         className="text-blue-600 hover:underline"
                                     >
-                                        Edit {plan._id}
+                                        Edit
                                     </button>
                                     <button
                                         onClick={() => handleDelete(plan._id)}
