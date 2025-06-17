@@ -79,7 +79,7 @@ export default function AllDoctors() {
                             <th className="p-3 border">Start Date</th>
                             <th className="p-3 border">End Date</th>
                             <th className="p-3 border">Status</th>
-                            <th className="p-3 border">Action</th>
+                            {/* <th className="p-3 border">Action</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -101,14 +101,7 @@ export default function AllDoctors() {
                                 <td className="p-3 border">
                                     {doc.subscription?.status || "N/A"}
                                 </td>
-                                <td className="p-3 border">
-                                    <button
-                                        className="bg-red-500 text-white px-3 py-1 rounded"
-                                        onClick={() => handleDelete(doc._id)}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+
                             </tr>
                         ))}
                     </tbody>
