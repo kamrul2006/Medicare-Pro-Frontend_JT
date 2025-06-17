@@ -1,171 +1,118 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
 
-
-export default function AdminDashboard() {
-    const { token } = useSelector((state) => state.auth);
+export default function AdminDashboardHome() {
     const [doctors, setDoctors] = useState([]);
-    const router = useRouter();
-
-
-    console.log(doctors)
-
-    const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState("all");
-    const [sortOrder, setSortOrder] = useState("asc");
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            router.replace("/");
-        }
-    }, [router]);
-
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchDoctors = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("Unauthorized");
+                setLoading(false);
+                return;
+            }
+
             try {
                 const res = await axios.get(
                     "https://medicare-pro-backend.vercel.app/api/v1/admin/users",
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                setDoctors(res.data);
-                setFilteredDoctors(res.data);
+                setDoctors(res?.data || []);
             } catch (err) {
-                console.error("Error fetching doctors:", err);
+                setError("Failed to fetch doctors");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDoctors();
-    }, [token]);
+    }, []);
 
-    const getStatus = (endDate) => {
-        if (!endDate) return "N/A";
+    const today = new Date();
 
-        const end = new Date(endDate);
-        const now = new Date();
-        const diffDays = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+    const totalDoctors = doctors.length;
+    const active = doctors.filter(d => new Date(d.subscription?.endDate) > today).length;
+    const expired = doctors.filter(d => new Date(d.subscription?.endDate) <= today).length;
+    const expiring7Days = doctors.filter(d => {
+        const end = new Date(d.subscription?.endDate);
+        const diffDays = (end - today) / (1000 * 60 * 60 * 24);
+        return diffDays > 0 && diffDays <= 7;
+    }).length;
 
-        if (diffDays < 0) return "Expired";
-        if (diffDays <= 7) return "Expiring Soon";
-        return "Active";
-    };
-
-    const handleFilter = (days) => {
-        setFilter(days);
-        if (days === "all") {
-            setFilteredDoctors(doctors);
-        } else if (days === "expired") {
-            const result = doctors.filter((doc) => getStatus(doc.subscription?.endDate) === "Expired");
-            setFilteredDoctors(result);
-        } else {
-            const result = doctors.filter((doc) => {
-                if (!doc.subscription?.endDate) return false;
-                const end = new Date(doc.subscription.endDate);
-                const now = new Date();
-                const diffDays = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-                return diffDays >= 0 && diffDays <= days;
-            });
-            setFilteredDoctors(result);
-        }
-    };
-
-    const handleSort = () => {
-        const sorted = [...filteredDoctors].sort((a, b) => {
-            const dateA = new Date(a.subscription?.endDate);
-            const dateB = new Date(b.subscription?.endDate);
-            return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-        });
-
-        setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-        setFilteredDoctors(sorted);
-    };
-
-    if (loading) {
-        return <div className="p-8 text-center">Loading...</div>;
-    }
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-        <div className="p-8 space-y-6">
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <div className="p-6">
+            <h1 className="text-3xl font-bold text-green-700 mb-4">Admin Subscription Overview</h1>
 
-            {/* Summary */}
-            <div className="bg-blue-100 p-4 rounded-lg shadow-md flex justify-between items-center">
-                <div>
-                    <h2 className="text-lg font-semibold">Total Doctors</h2>
-                    <p className="text-2xl">{doctors.length}</p>
-                </div>
-                <div>
-                    <button className="bg-green-500 text-white px-4 py-2 rounded mr-2" onClick={() => handleFilter("all")}>All</button>
-                    <button className="bg-yellow-500 text-white px-4 py-2 rounded mr-2" onClick={() => handleFilter(7)}>Expiring 7 days</button>
-                    <button className="bg-yellow-400 text-white px-4 py-2 rounded mr-2" onClick={() => handleFilter(15)}>Expiring 15 days</button>
-                    <button className="bg-yellow-300 text-white px-4 py-2 rounded mr-2" onClick={() => handleFilter(30)}>Expiring 30 days</button>
-                    <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => handleFilter("expired")}>Expired</button>
-                </div>
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <Card title="Total Doctors" count={totalDoctors} color="blue" />
+                <Card title="Active Subscriptions" count={active} color="green" />
+                <Card title="Expiring (7 Days)" count={expiring7Days} color="yellow" />
+                <Card title="Expired" count={expired} color="red" />
             </div>
 
-            {/* Doctor List */}
-            <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-300 rounded">
-                    <thead className="bg-gray-200">
+            {/* Doctors Table */}
+            <div className="bg-white rounded shadow p-4">
+                <h2 className="text-xl font-semibold mb-4">All user List</h2>
+                <table className="w-full table-auto border">
+                    <thead className="bg-gray-100">
                         <tr>
-                            <th className="p-3 border">Name</th>
-                            <th className="p-3 border">Email</th>
-                            <th className="p-3 border">Specialization</th>
-                            <th className="p-3 border">Start Date</th>
-                            <th className="p-3 border">
-                                End Date
-                                <button className="ml-2 text-blue-600" onClick={handleSort}>
-                                    {sortOrder === "asc" ? "↑" : "↓"}
-                                </button>
-                            </th>
-                            <th className="p-3 border">Status</th>
+                            <th className="p-2 border">Name</th>
+                            <th className="p-2 border">Email</th>
+                            <th className="p-2 border">Plan</th>
+                            <th className="p-2 border">End Date</th>
+                            <th className="p-2 border">Role</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredDoctors.map((doc) => (
-                            <tr key={doc._id} className="text-center">
-                                <td className="p-3 border">{doc.name}</td>
-                                <td className="p-3 border">{doc.email}</td>
-                                <td className="p-3 border">{doc.specialization}</td>
-                                <td className="p-3 border">
-                                    {doc.subscription?.startDate
-                                        ? new Date(doc.subscription.startDate).toLocaleDateString()
-                                        : "N/A"}
-                                </td>
-                                <td className="p-3 border">
-                                    {doc.subscription?.endDate
-                                        ? new Date(doc.subscription.endDate).toLocaleDateString()
-                                        : "N/A"}
-                                </td>
-                                <td className="p-3 border">
-                                    <span
-                                        className={`px-3 py-1 rounded text-white ${getStatus(doc.subscription?.endDate) === "Active"
-                                            ? "bg-green-500"
-                                            : getStatus(doc.subscription?.endDate) === "Expiring Soon"
-                                                ? "bg-yellow-500"
-                                                : "bg-red-500"
-                                            }`}
-                                    >
-                                        {getStatus(doc.subscription?.endDate)}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
+                        {doctors.map((doc) => {
+                            const endDate = new Date(doc.subscription?.endDate);
+                            const isExpired = endDate <= today;
+                            const status = isExpired
+                                ? "Expired"
+                                : (endDate - today) / (1000 * 60 * 60 * 24) <= 7
+                                    ? "Expiring Soon"
+                                    : "Active";
+
+                            const color =
+                                status === "Active"
+                                    ? "green"
+                                    : status === "Expiring Soon"
+                                        ? "yellow"
+                                        : "red";
+
+                            return (
+                                <tr key={doc._id}>
+                                    <td className="p-2 border">{doc.name}</td>
+                                    <td className="p-2 border">{doc.email}</td>
+                                    <td className="p-2 border">{doc.subscription?.plan?.name || "N/A"}</td>
+                                    <td className="p-2 border">{endDate.toLocaleDateString()}</td>
+                                    <td className={`p-2 border ${doc.role == "doctor" ? "text-blue-700" : "text-green-700"} font-bold `}>{doc.role}</td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
+        </div>
+    );
+}
+
+function Card({ title, count, color }) {
+    return (
+        <div className={`bg-${color}-100 text-${color}-800 p-6 rounded-lg shadow text-center`}>
+            <h2 className="text-xl font-semibold">{title}</h2>
+            <p className="text-3xl mt-2">{count}</p>
         </div>
     );
 }

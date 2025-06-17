@@ -20,7 +20,11 @@ export default function AllDoctors() {
                         },
                     }
                 );
-                setDoctors(res.data);
+
+                const data = res.data;
+                const doctr = data.filter((doc) => doc.role == "doctor")
+                setDoctors(doctr)
+
             } catch (err) {
                 console.error("Error fetching doctors:", err);
             } finally {

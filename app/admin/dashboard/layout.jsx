@@ -36,6 +36,9 @@ export default function AdminDashboardLayout({ children }) {
                     <Link href="/admin/dashboard/subscription" className="hover:bg-blue-600 p-2 rounded">
                         Subscription Plans
                     </Link>
+                    <Link href="/admin/dashboard/add-subscription" className="hover:bg-blue-600 p-2 rounded">
+                        Add   Subscription
+                    </Link>
                 </nav>
                 <div className="mt-auto">
                     <button

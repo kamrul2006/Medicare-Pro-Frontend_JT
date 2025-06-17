@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import DoctorDashboardSome from "@/components/doctor/ddctr";
 
 export default function DoctorDashboardHome() {
     const [profile, setProfile] = useState(null);
@@ -63,6 +64,8 @@ export default function DoctorDashboardHome() {
                 <p><strong>Subscription:</strong> {profile?.subscription?.planId || "N/A"}</p>
                 <p><strong>Payment Status:</strong> {profile?.subscription?.paymentStatus || "N/A"}</p>
             </div>
+
+            <DoctorDashboardSome />
         </div>
     );
 }
