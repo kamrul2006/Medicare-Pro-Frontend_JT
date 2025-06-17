@@ -12,7 +12,7 @@ export default function PlanManagement() {
     const fetchPlans = async () => {
         try {
             const res = await axios.get("https://medicare-pro-backend.vercel.app/api/v1/admin/plans");
-            setPlans(res.data?.plans || []);
+            setPlans(res.data || []);
         } catch (err) {
             setError("Failed to load plans.");
         }
@@ -82,10 +82,10 @@ export default function PlanManagement() {
                                 <td className="p-3">{plan.isActive ? "🟢" : "🔴"}</td>
                                 <td className="p-3 flex gap-2">
                                     <button
-                                        onClick={() => router.push(`/admin/dashboard/subscriptions/edit/${plan._id}`)}
+                                        onClick={() => router.push(`/admin/dashboard/subscription/edit/${plan._id}`)}
                                         className="text-blue-600 hover:underline"
                                     >
-                                        Edit
+                                        Edit {plan._id}
                                     </button>
                                     <button
                                         onClick={() => handleDelete(plan._id)}

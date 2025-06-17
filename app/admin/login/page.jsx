@@ -23,9 +23,9 @@ export default function AdminLogin() {
                 password,
             });
 
-            console.log("Response: ", response.data);
-            console.log(response.data.token);
-            console.log(response.data.role);
+            // console.log("Response: ", response.data);
+            // console.log(response.data.token);
+            // console.log(response.data.role);
 
             dispatch(
                 setCredentials({

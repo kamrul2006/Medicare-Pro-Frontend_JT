@@ -37,7 +37,7 @@ export default function AddDoctor() {
     }, []);
 
 
-    console.log(plans)
+    // console.log(plans)
 
     // Handle input change
     const handleChange = (e) => {
@@ -69,7 +69,7 @@ export default function AddDoctor() {
                 }
             );
 
-            console.log("Doctor created:", res.data);
+            // console.log("Doctor created:", res.data);
             alert("Doctor added successfully!");
             router.push("/admin/dashboard");
         } catch (err) {

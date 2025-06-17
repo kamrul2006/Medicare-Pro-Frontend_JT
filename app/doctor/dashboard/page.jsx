@@ -27,7 +27,7 @@ export default function DoctorDashboardHome() {
                     }
                 );
                 setProfile(res.data.doctor);
-                console.log(res.data.doctor)
+                // console.log(res.data.doctor)
 
             } catch (err) {
                 setError("Failed to fetch profile");
@@ -37,7 +37,7 @@ export default function DoctorDashboardHome() {
         };
 
 
-        console.log(profile)
+        // console.log(profile)
 
         fetchProfile();
     }, []);
