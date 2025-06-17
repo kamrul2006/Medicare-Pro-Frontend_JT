@@ -5,6 +5,7 @@ import axiosInstance from "@/lib/axios";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AdminLogin() {
     const dispatch = useDispatch();
@@ -73,6 +74,13 @@ export default function AdminLogin() {
             >
                 {loading ? "Logging in..." : "Login"}
             </button>
+
+            <div className="mt-3.5 flex items-center">
+                <Link href={"/"} className="text-center px-5 mx-auto my-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-300"
+                >
+                    Back to Home Page
+                </Link>
+            </div>
         </div>
     );
 }

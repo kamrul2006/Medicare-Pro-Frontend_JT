@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function DoctorLogin() {
     const router = useRouter();
@@ -86,6 +87,15 @@ export default function DoctorLogin() {
                         {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
+
+                <div className="mt-3.5 flex items-center">
+                    <Link href={"/"} className="text-center px-5 mx-auto my-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-all duration-300"
+                    >
+                        Back to Home Page
+                    </Link>
+                </div>
+
+
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function HomePage() {
   const router = useRouter();
@@ -16,18 +17,16 @@ export default function HomePage() {
         </p>
 
         <div className="flex justify-center gap-8">
-          <button
-            onClick={() => router.push("/admin/login")}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-8 py-4 rounded-full shadow-lg transition-all duration-300"
+          <Link
+            href={"/admin/login"} className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-8 py-4 rounded-full shadow-lg transition-all duration-300"
           >
             Admin Login
-          </button>
-          <button
-            onClick={() => router.push("/doctor/login")}
-            className="bg-green-600 hover:bg-green-700 text-white text-xl px-8 py-4 rounded-full shadow-lg transition-all duration-300"
+          </Link>
+          <Link
+            href={"/doctor/login"} className="bg-green-600 hover:bg-green-700 text-white text-xl px-8 py-4 rounded-full shadow-lg transition-all duration-300"
           >
             Doctor Login
-          </button>
+          </Link>
         </div>
       </div>
     </div>
