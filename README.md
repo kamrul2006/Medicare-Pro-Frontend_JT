@@ -1,4 +1,3 @@
-
 # 🩺 Medicare Pro Dashboard
 
 A stylish and responsive Admin Dashboard built using **Next.js**, **Axios**, and **Tailwind CSS**. This dashboard provides an overview of subscription statuses for users and doctors in the **Medicare Pro** platform.
@@ -18,7 +17,6 @@ A stylish and responsive Admin Dashboard built using **Next.js**, **Axios**, and
 ## 📁 Project Structure
 
 ```
-
 /admin
 └── dashboard
 └── page.jsx          # Main dashboard overview page
